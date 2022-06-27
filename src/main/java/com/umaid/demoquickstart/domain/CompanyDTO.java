@@ -20,7 +20,7 @@ public class CompanyDTO {
 
 	private int id;
 	private String cname;
-	private int eid;
+	private Integer eid;
 	private String ename;
 
 	public CompanyDTO(CompanyDAO entity) {

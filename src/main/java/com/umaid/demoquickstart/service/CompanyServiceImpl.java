@@ -34,7 +34,7 @@ public class CompanyServiceImpl implements ICompanyService {
 			// response.setData(null);
 			// response.setStatus(404);
 			// response.setMessage("Empty Database!!");
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Database is empty");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Database is empty");
 		} else {
 			for (int i = 0; i < dataDb.size(); i++) {
 				CompanyDAO company = dataDb.get(i);
@@ -51,24 +51,23 @@ public class CompanyServiceImpl implements ICompanyService {
 	}
 
 	public CompanyResponse<CompanyDTO> addCompany(CompanyDTO request) {
-		if(request.getEname()==""||request.getEname()==null)
-		{
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Employee Name is empty!!!");
+		if (request.getEname() == "" || request.getEname() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee Name cannot be Empty or Null!!!");
 		}
-		
-		//converting DTO and DAO 
+		if (request.getEid() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee ID cannot be Null!!!");
+		}
+		// converting DTO and DAO
 		CompanyDAO entity = new CompanyDAO(request);
-		//searching DB to check in Eid already present
+		// searching DB to check in Eid already present
 		List<CompanyDAO> dataDb = (List<CompanyDAO>) comRepo.findAll();
-		for(int i=0;i<dataDb.size();i++)
-		{
+		for (int i = 0; i < dataDb.size(); i++) {
 			CompanyDAO company = dataDb.get(i);
-			if(company.getEid()==entity.getEid())
-			{
+			if (request.getEid().equals(company.getEid())) {
 				throw new ResponseStatusException(HttpStatus.FOUND, "Employee ID Already present!!!");
 			}
 		}
-		//saving new DAO 
+		// saving new DAO
 		comRepo.save(entity);
 		CompanyResponse<CompanyDTO> response = new CompanyResponse<CompanyDTO>(request, "New Employee added!!", 200);
 
@@ -87,9 +86,9 @@ public class CompanyServiceImpl implements ICompanyService {
 			response.setMessage("Employee ID Found!!!");
 			response.setStatus(200);
 		} else {
-//			response.setData(null);
-//			response.setMessage("Employee ID Not Found !!!");
-//			response.setStatus(404);
+			// response.setData(null);
+			// response.setMessage("Employee ID Not Found !!!");
+			// response.setStatus(404);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee ID Not Found!!!");
 		}
 		return response;
@@ -112,9 +111,10 @@ public class CompanyServiceImpl implements ICompanyService {
 			response.setMessage("Updated the Employee ID: " + eid);
 			response.setStatus(200);
 		} else {
-//			response.setData(null);
-//			response.setMessage("Employee ID: " + eid + " Not Found to Update!!!");
-//			response.setStatus(404);
+			// response.setData(null);
+			// response.setMessage("Employee ID: " + eid + " Not Found to
+			// Update!!!");
+			// response.setStatus(404);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee ID Not Found!!!!");
 		}
 		return response;
@@ -133,9 +133,10 @@ public class CompanyServiceImpl implements ICompanyService {
 			response.setStatus(200);
 			comRepo.deleteByEid(eid);
 		} else {
-//			response.setData(null);
-//			response.setMessage("Employee ID: " + eid + " Not Found to Deleted!!!");
-//			response.setStatus(404);
+			// response.setData(null);
+			// response.setMessage("Employee ID: " + eid + " Not Found to
+			// Deleted!!!");
+			// response.setStatus(404);
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee ID Not Found!!!");
 		}
 		return response;
